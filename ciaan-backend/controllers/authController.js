@@ -25,7 +25,7 @@ exports.registerUser = async (req, res) => {
         const payload = { user: { id: user.id } };
         jwt.sign(
             payload,
-            process.env.MONGO_URI, // Using URI as secret for now, can be changed
+            process.env.JWT_SECRET, // Using URI as secret for now, can be changed
             { expiresIn: '5h' },
             (err, token) => {
                 if (err) throw err;
@@ -59,7 +59,7 @@ exports.loginUser = async (req, res) => {
         const payload = { user: { id: user.id } };
         jwt.sign(
             payload,
-            process.env.MONGO_URI, // We are using this as our secret key
+            process.env.JWT_SECRET, // We are using this as our secret key
             { expiresIn: '5h' },
             (err, token) => {
                 if (err) throw err;
