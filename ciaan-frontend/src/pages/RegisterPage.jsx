@@ -17,8 +17,8 @@ const RegisterPage = () => {
         e.preventDefault();
         try {
             const res = await axios.post(
-                'http://localhost:5000/api/auth/register',
-                formData
+                `${import.meta.env.VITE_API_URL}/api/auth/register`,
+            formData
             );
             console.log('Success! Your token is:', res.data);
             alert('Registration successful!');
