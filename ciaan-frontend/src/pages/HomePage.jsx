@@ -10,10 +10,12 @@ const HomePage = () => {
     const [editingPostId, setEditingPostId] = useState(null);
     const [editedText, setEditedText] = useState('');
 
+    const API_URL = import.meta.env.VITE_API_URL;
+
     const fetchPosts = async () => {
         try {
-            const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/posts`);
-        setPosts(res.data);
+            const res = await axios.get(`${API_URL}/api/posts`);
+            setPosts(res.data);
         } catch (err) {
             console.error('Failed to fetch posts:', err);
         }
@@ -41,7 +43,7 @@ const HomePage = () => {
         }
         try {
             const config = { headers: { 'x-auth-token': token } };
-            await axios.post(`${import.meta.env.VITE_API_URL}`, { text }, config);
+            await axios.post(`${API_URL}/api/posts`, { text }, config);
             setText('');
             fetchPosts();
         } catch (err) {
@@ -54,7 +56,7 @@ const HomePage = () => {
             try {
                 const token = localStorage.getItem('token');
                 const config = { headers: { 'x-auth-token': token } };
-                await axios.delete(`${import.meta.env.VITE_API_URL}/api/posts/${postId}`, config);
+                await axios.delete(`${API_URL}/api/posts/${postId}`, config);
                 fetchPosts();
             } catch (err) {
                 alert('Failed to delete post.');
@@ -72,7 +74,7 @@ const HomePage = () => {
         try {
             const token = localStorage.getItem('token');
             const config = { headers: { 'x-auth-token': token } };
-            await axios.put(`${import.meta.env.VITE_API_URL}/api/posts/${postId}`, { text: editedText }, config);
+            await axios.put(`${API_URL}/api/posts/${postId}`, { text: editedText }, config);
             setEditingPostId(null);
             setEditedText('');
             fetchPosts();
@@ -81,14 +83,10 @@ const HomePage = () => {
         }
     };
 
+    // The return JSX remains the same as the polished version
     return (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {/* Left Column (for future use, like profile summary) */}
-            <div className="hidden lg:block lg:col-span-1">
-                {/* You could add a user profile summary card here */}
-            </div>
-
-            {/* Center Column (Main Feed) */}
+            <div className="hidden lg:block lg:col-span-1"></div>
             <div className="lg:col-span-2">
                 {user && (
                     <div className="bg-gray-800 p-6 rounded-lg shadow-md mb-8 border border-gray-700">
@@ -109,50 +107,45 @@ const HomePage = () => {
                         </form>
                     </div>
                 )}
-
                 <div className="space-y-6">
-                    {posts.length > 0 ? (
-                        posts.map((post) => (
-                            <div key={post._id} className="bg-gray-800 p-4 sm:p-6 rounded-lg shadow-md border border-gray-700">
-                                <div className="flex justify-between items-start">
-                                    <div className="flex items-center space-x-4">
-                                        <div className="w-12 h-12 bg-gray-700 rounded-full flex items-center justify-center font-bold text-xl">
-                                            {post.user.name.charAt(0)}
-                                        </div>
-                                        <div>
-                                            <Link to={`/profile/${post.user._id}`} className="font-bold text-lg text-white hover:underline">{post.user.name}</Link>
-                                            <p className="text-gray-400 text-sm">{new Date(post.createdAt).toLocaleString()}</p>
-                                        </div>
-                                    </div>
-                                    {user && user.id === post.user._id && (
-                                        <div className="flex space-x-2">
-                                            <button onClick={() => handleEditClick(post)} className="p-1 text-sm text-gray-400 hover:text-white transition-colors">Edit</button>
-                                            <button onClick={() => handleDelete(post._id)} className="p-1 text-sm text-gray-400 hover:text-red-500 transition-colors">Delete</button>
-                                        </div>
-                                    )}
-                                </div>
-                                {editingPostId === post._id ? (
-                                    <form onSubmit={(e) => handleUpdateSubmit(e, post._id)} className="mt-4">
-                                        <textarea
-                                            className="w-full p-3 bg-gray-700 border border-gray-600 rounded-md text-white"
-                                            rows="3"
-                                            value={editedText}
-                                            onChange={(e) => setEditedText(e.target.value)}
-                                            required
-                                        ></textarea>
-                                        <div className="text-right mt-2 space-x-2">
-                                            <button type="button" onClick={() => setEditingPostId(null)} className="py-1 px-3 bg-gray-600 hover:bg-gray-500 rounded-md text-sm">Cancel</button>
-                                            <button type="submit" className="py-1 px-3 bg-blue-600 hover:bg-blue-700 rounded-md text-sm">Save</button>
-                                        </div>
-                                    </form>
-                                ) : (
-                                    <p className="text-gray-300 mt-4 whitespace-pre-wrap px-2">{post.text}</p>
-                                )}
-                            </div>
-                        ))
-                    ) : (
-                        <div className="text-center text-gray-400 bg-gray-800 p-8 rounded-lg">The feed is empty. Be the first to post!</div>
-                    )}
+                    {posts.map((post) => (
+                       <div key={post._id} className="bg-gray-800 p-4 sm:p-6 rounded-lg shadow-md border border-gray-700">
+                           <div className="flex justify-between items-start">
+                               <div className="flex items-center space-x-4">
+                                   <div className="w-12 h-12 bg-gray-700 rounded-full flex items-center justify-center font-bold text-xl">
+                                       {post.user.name.charAt(0)}
+                                   </div>
+                                   <div>
+                                       <Link to={`/profile/${post.user._id}`} className="font-bold text-lg text-white hover:underline">{post.user.name}</Link>
+                                       <p className="text-gray-400 text-sm">{new Date(post.createdAt).toLocaleString()}</p>
+                                   </div>
+                               </div>
+                               {user && user.id === post.user._id && (
+                                   <div className="flex space-x-2">
+                                       <button onClick={() => handleEditClick(post)} className="p-1 text-sm text-gray-400 hover:text-white transition-colors">Edit</button>
+                                       <button onClick={() => handleDelete(post._id)} className="p-1 text-sm text-gray-400 hover:text-red-500 transition-colors">Delete</button>
+                                   </div>
+                               )}
+                           </div>
+                           {editingPostId === post._id ? (
+                               <form onSubmit={(e) => handleUpdateSubmit(e, post._id)} className="mt-4">
+                                   <textarea
+                                       className="w-full p-3 bg-gray-700 border border-gray-600 rounded-md text-white"
+                                       rows="3"
+                                       value={editedText}
+                                       onChange={(e) => setEditedText(e.target.value)}
+                                       required
+                                   ></textarea>
+                                   <div className="text-right mt-2 space-x-2">
+                                       <button type="button" onClick={() => setEditingPostId(null)} className="py-1 px-3 bg-gray-600 hover:bg-gray-500 rounded-md text-sm">Cancel</button>
+                                       <button type="submit" className="py-1 px-3 bg-blue-600 hover:bg-blue-700 rounded-md text-sm">Save</button>
+                                   </div>
+                               </form>
+                           ) : (
+                               <p className="text-gray-300 mt-4 whitespace-pre-wrap px-2">{post.text}</p>
+                           )}
+                       </div>
+                    ))}
                 </div>
             </div>
         </div>
