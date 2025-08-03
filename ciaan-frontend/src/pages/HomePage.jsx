@@ -41,7 +41,7 @@ const HomePage = () => {
         }
         try {
             const config = { headers: { 'x-auth-token': token } };
-            await axios.post('http://localhost:5000/api/posts', { text }, config);
+            await axios.post(`${import.meta.env.VITE_API_URL}`, { text }, config);
             setText('');
             fetchPosts();
         } catch (err) {
@@ -54,7 +54,7 @@ const HomePage = () => {
             try {
                 const token = localStorage.getItem('token');
                 const config = { headers: { 'x-auth-token': token } };
-                await axios.delete(`http://localhost:5000/api/posts/${postId}`, config);
+                await axios.delete(`${import.meta.env.VITE_API_URL}/api/posts/${postId}`, config);
                 fetchPosts();
             } catch (err) {
                 alert('Failed to delete post.');
@@ -72,7 +72,7 @@ const HomePage = () => {
         try {
             const token = localStorage.getItem('token');
             const config = { headers: { 'x-auth-token': token } };
-            await axios.put(`http://localhost:5000/api/posts/${postId}`, { text: editedText }, config);
+            await axios.put(`${import.meta.env.VITE_API_URL}/api/posts/${postId}`, { text: editedText }, config);
             setEditingPostId(null);
             setEditedText('');
             fetchPosts();
