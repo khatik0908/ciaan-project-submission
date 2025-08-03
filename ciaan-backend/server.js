@@ -19,6 +19,11 @@ app.use('/api/auth', require('./routes/auth'));
 app.use('/api/posts', require('./routes/posts'));
 app.use('/api/users', require('./routes/users'));
 
+// Health Check Route for Render
+app.get('/', (req, res) => {
+    res.send('Backend API is running...');
+});
+
 // Connect to our MongoDB database
 mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log('MongoDB Connected...'))
